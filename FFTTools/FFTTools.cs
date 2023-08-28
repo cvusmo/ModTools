@@ -70,12 +70,17 @@ namespace FFTTools
 
             if (textureImporter != null)
             {
-                textureImporter.textureType = TextureImporterType.Default;
-                textureImporter.textureShape = TextureImporterShape.Texture2D;
-                textureImporter.mipmapEnabled = false;
-                textureImporter.filterMode = FilterMode.Point;
-                textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
-                textureImporter.isReadable = true;
+                textureImporter.textureType = TextureImporterType.Default; // Texture type to Default
+                textureImporter.textureShape = TextureImporterShape.Texture2D; // Shape to 2D
+                textureImporter.wrapMode = TextureWrapMode.Clamp; // Wrap mode to Clamp
+                textureImporter.filterMode = FilterMode.Bilinear; // Filter mode to Bilinear for smooth transitions
+                textureImporter.alphaSource = TextureImporterAlphaSource.FromInput; // Get alpha from the input texture
+                textureImporter.alphaIsTransparency = true; // Interpret alpha as transparency
+                textureImporter.textureCompression = TextureImporterCompression.Uncompressed; // No compression
+                textureImporter.sRGBTexture = true; // Interpret as color data, not linear
+                textureImporter.mipmapEnabled = false; // Disable mipmaps
+                textureImporter.maxTextureSize = 512; // Assuming the source resolution is 512. Change if necessary.
+                textureImporter.isReadable = true; // Ensure the texture can be read by scripts, which you'll need for your conversion
 
                 AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceUpdate);
             }
