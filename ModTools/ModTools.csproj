@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9919BF37-E9CC-449F-8FBD-F6CB46FA48AC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FFTTools</RootNamespace>
-    <AssemblyName>FFTTools</AssemblyName>
+    <RootNamespace>ModTools</RootNamespace>
+    <AssemblyName>ModTools</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimationBridge.cs" />
-    <Compile Include="FFTTools.cs" />
+    <Compile Include="ModTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEditor">

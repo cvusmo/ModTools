@@ -1,12 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace FFTTools
+namespace ModTools
 {
 
-    public class FFTTools : MonoBehaviour
+    public class ModTools : MonoBehaviour
     {
-        [MenuItem("FFT Tools/3D Textures Generator")]
+        [MenuItem("KSP2 Mod Tools/3D Textures Generator")]
         static void CreateTexture3DFromSlices()
         {
             string[] orientations =
