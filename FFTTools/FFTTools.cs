@@ -1,33 +1,82 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace FFTTools
 {
-
     public class FFTTools : MonoBehaviour
     {
+
         [MenuItem("FFT Tools/3D Textures Generator")]
-        static void CreateTexture3DFromSlices()
+        static void PrepareAndGenerate3DTextures()
+        {
+            PrepareSlices();
+            CreateTexture3DFromStackedImages();
+        }
+        static void PrepareSlices()
+        {
+            string baseDirectory = "Assets/FancyFuelTanks/Materials & Textures/VFX/VaporVFX/VaporSlices/";
+            int targetResolution = 128;
+            string[] orientations =
+            {
+                "0_Back", "45_BackRight", "90_Right", "135_FrontRight",
+                "180_Front", "225_FrontLeft", "270_Left", "315_BackLeft",
+                "90_Top", "270_Bottom", "D45_TopDiagonal", "D225_BottomDiagonal"
+            };
+
+            foreach (string orientation in orientations)
+            {
+                string orientationDirectory = $"{baseDirectory}{orientation}/";
+
+                List<Texture2D> sliceList = new List<Texture2D>();
+
+                for (int i = 1; i <= 16; i++)
+                {
+                    string slicePath = $"{orientationDirectory}{orientation}_slice_{i:03}.png";
+                    SetupTextureImportSettings(slicePath);
+                    Texture2D slice = AssetDatabase.LoadAssetAtPath<Texture2D>(slicePath);
+
+                    if (slice == null)
+                    {
+                        Debug.LogError($"Failed to load slice {i} for {orientation}");
+                        return;
+                    }
+
+                    Texture2D resizedSlice = ResizeTexture(slice, targetResolution, targetResolution);
+                    sliceList.Add(resizedSlice);
+                }
+
+                // Stack the slices
+                Texture2D stackedSlices = new Texture2D(targetResolution, targetResolution * sliceList.Count);
+
+                for (int i = 0; i < sliceList.Count; i++)
+                {
+                    Color[] slicePixels = sliceList[i].GetPixels();
+                    stackedSlices.SetPixels(0, i * targetResolution, targetResolution, targetResolution, slicePixels);
+                }
+
+                stackedSlices.Apply();
+
+                byte[] stackedBytes = stackedSlices.EncodeToPNG();
+                string stackedSavePath = $"{orientationDirectory}{orientation}_Stacked.png";
+                System.IO.File.WriteAllBytes(stackedSavePath, stackedBytes);
+                AssetDatabase.Refresh();
+            }
+        }
+        static void CreateTexture3DFromStackedImages()
         {
             string[] orientations =
-            { "0_Back",
-              "45_BackRight",
-                "90_Right",
-                "135_FrontRight",
-                "180_Front",
-                "225_FrontLeft",
-                "270_Left",
-                "315_BackLeft",
-                "90_Top",
-                "270_Bottom",
-                "D45_TopDiagonal",
-                "D225_BottomDiagonal" };
+            {
+                "0_Back", "45_BackRight", "90_Right", "135_FrontRight",
+                "180_Front", "225_FrontLeft", "270_Left", "315_BackLeft",
+                "90_Top", "270_Bottom", "D45_TopDiagonal", "D225_BottomDiagonal"
+            };
 
-            int originalSliceResolution = 2048;
-            int targetResolution = 256;
-            int depth = 64;
+            int targetResolution = 128;
+            int depth = 16;
             TextureFormat format = TextureFormat.RGBA32;
             TextureWrapMode wrapMode = TextureWrapMode.Clamp;
+
             string baseDirectory = "Assets/FancyFuelTanks/Materials & Textures/VFX/VaporVFX/VaporSlices/";
 
             foreach (string orientation in orientations)
@@ -35,20 +84,21 @@ namespace FFTTools
                 Texture3D texture3D = new Texture3D(targetResolution, targetResolution, depth, format, false);
                 texture3D.wrapMode = wrapMode;
 
-                for (int z = 1; z < depth; z++)
+                string stackedImagePath = $"{baseDirectory}/Stacked_16/{orientation}_Stacked.png";
+                SetupTextureImportSettings(stackedImagePath);
+                AssetDatabase.ImportAsset(stackedImagePath, ImportAssetOptions.ForceUpdate);
+                Texture2D stackedImage = AssetDatabase.LoadAssetAtPath<Texture2D>(stackedImagePath);
+
+                if (stackedImage == null)
                 {
-                    string texturePath = $"{baseDirectory}/{orientation}/{orientation}_slice_{(z).ToString("D3")}.png";
-                    SetupTextureImportSettings(texturePath);
+                    Debug.LogError($"Failed to load stacked image for {orientation}");
+                    return;
+                }
 
-                    Texture2D slice = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
-                    slice = ResizeTexture(slice, targetResolution, targetResolution);
+                for (int z = 0; z < depth; z++)
+                {
+                    Texture2D slice = GetSliceFromStackedImage(stackedImage, z, targetResolution);
                     slice = AdjustAlpha(slice, 0.2f);
-
-                    if (slice == null)
-                    {
-                        Debug.LogError($"Failed to load slice at depth {z} for {orientation}");
-                        return;
-                    }
 
                     texture3D.SetPixels(slice.GetPixels(), z);
                 }
@@ -56,6 +106,14 @@ namespace FFTTools
                 texture3D.Apply();
                 AssetDatabase.CreateAsset(texture3D, $"{baseDirectory}/3DTexture_{orientation}.asset");
             }
+        }
+
+        private static Texture2D GetSliceFromStackedImage(Texture2D stackedImage, int sliceIndex, int resolution)
+        {
+            Texture2D slice = new Texture2D(resolution, resolution);
+            slice.SetPixels(0, 0, resolution, resolution, stackedImage.GetPixels(0, sliceIndex * 120, resolution, 120));
+            slice.Apply();
+            return slice;
         }
 
         [MenuItem("FFT Tools/Animation Bridge")]
@@ -100,7 +158,6 @@ namespace FFTTools
 
             return originalTexture;
         }
-
         private static Texture2D ResizeTexture(Texture2D originalTexture, int width, int height)
         {
             RenderTexture rt = new RenderTexture(width, height, 24);
