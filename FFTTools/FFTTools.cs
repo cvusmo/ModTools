@@ -19,15 +19,14 @@ namespace FFTTools
             int targetResolution = 128;
             string[] orientations =
             {
-                "0_Back", "45_BackRight", "90_Right", "135_FrontRight",
-                "180_Front", "225_FrontLeft", "270_Left", "315_BackLeft",
-                "90_Top", "270_Bottom", "D45_TopDiagonal", "D225_BottomDiagonal"
-            };
+        "0_Back", "45_BackRight", "90_Right", "135_FrontRight",
+        "180_Front", "225_FrontLeft", "270_Left", "315_BackLeft",
+        "90_Top", "270_Bottom", "D45_TopDiagonal", "D225_BottomDiagonal"
+    };
 
             foreach (string orientation in orientations)
             {
                 string orientationDirectory = $"{baseDirectory}{orientation}/";
-
                 List<Texture2D> sliceList = new List<Texture2D>();
 
                 for (int i = 1; i <= 16; i++)
@@ -59,8 +58,9 @@ namespace FFTTools
 
                 byte[] stackedBytes = stackedSlices.EncodeToPNG();
                 string stackedSavePath = $"{orientationDirectory}{orientation}_Stacked.png";
+
                 System.IO.File.WriteAllBytes(stackedSavePath, stackedBytes);
-                AssetDatabase.Refresh();
+                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);  // Force update the asset database after each stacked texture creation.
             }
         }
         static void CreateTexture3DFromStackedImages()
@@ -116,13 +116,7 @@ namespace FFTTools
             return slice;
         }
 
-        [MenuItem("FFT Tools/Animation Bridge")]
-        static void CreateAnimationBridge()
-        {
-            AnimationBridge newBridge = ScriptableObject.CreateInstance<AnimationBridge>();
-            AssetDatabase.CreateAsset(newBridge, "Assets/AnimationBridge.asset");
-            AssetDatabase.Refresh();
-        }
+
         private static void SetupTextureImportSettings(string texturePath)
         {
             TextureImporter textureImporter = (TextureImporter)TextureImporter.GetAtPath(texturePath);
@@ -171,6 +165,14 @@ namespace FFTTools
 
             RenderTexture.active = null;
             return resizedTexture;
+        }
+
+        [MenuItem("FFT Tools/Animation Bridge")]
+        static void CreateAnimationBridge()
+        {
+            AnimationBridge newBridge = ScriptableObject.CreateInstance<AnimationBridge>();
+            AssetDatabase.CreateAsset(newBridge, "Assets/AnimationBridge.asset");
+            AssetDatabase.Refresh();
         }
     }
 }
