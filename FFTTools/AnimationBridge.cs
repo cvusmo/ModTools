@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace FFTTools
+namespace ModTools
 { 
     [CreateAssetMenu(menuName = "AnimationBridge")]
     public class AnimationBridge : ScriptableObject
