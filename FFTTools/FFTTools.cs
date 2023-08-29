@@ -11,17 +11,17 @@ namespace FFTTools
         {
             string[] orientations =
             { "0_Back",
-        "45_BackRight",
-        "90_Right",
-        "135_FrontRight",
-        "180_Front",
-        "225_FrontLeft",
-        "270_Left",
-        "315_BackLeft",
-        "90_Top",
-        "270_Bottom",
-        "D45_TopDiagonal",
-        "D225_BottomDiagonal" };
+              "45_BackRight",
+                "90_Right",
+                "135_FrontRight",
+                "180_Front",
+                "225_FrontLeft",
+                "270_Left",
+                "315_BackLeft",
+                "90_Top",
+                "270_Bottom",
+                "D45_TopDiagonal",
+                "D225_BottomDiagonal" };
 
             int originalSliceResolution = 2048;
             int targetResolution = 256;
@@ -42,6 +42,7 @@ namespace FFTTools
 
                     Texture2D slice = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
                     slice = ResizeTexture(slice, targetResolution, targetResolution);
+                    slice = AdjustAlpha(slice, 0.2f);
 
                     if (slice == null)
                     {
@@ -85,6 +86,21 @@ namespace FFTTools
                 AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceUpdate);
             }
         }
+        private static Texture2D AdjustAlpha(Texture2D originalTexture, float alphaValue)
+        {
+            Color[] pixels = originalTexture.GetPixels();
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color pixel = pixels[i];
+                pixel.a = alphaValue;
+                pixels[i] = pixel;
+            }
+            originalTexture.SetPixels(pixels);
+            originalTexture.Apply();
+
+            return originalTexture;
+        }
+
         private static Texture2D ResizeTexture(Texture2D originalTexture, int width, int height)
         {
             RenderTexture rt = new RenderTexture(width, height, 24);
