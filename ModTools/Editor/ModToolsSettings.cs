@@ -25,8 +25,6 @@ namespace ModTools
         private string export = "Assets/";
         internal string selectedOrientation;
         private Texture2D cvusmo;
-
-        [MenuItem("KSP2 ModTools/3D Texture Generator")]
         public static void ShowWindow()
         {
             ModToolsSettings mainWindow = GetWindow<ModToolsSettings>("Generator");
@@ -46,7 +44,12 @@ namespace ModTools
 
         private void OnEnable()
         {
-            
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string[] resourceNames = assembly.GetManifestResourceNames();
+            foreach (string resourceName in resourceNames)
+            {
+                Debug.Log(resourceName);
+            }
             resolution = ModToolsCore.resolution;
             targetResolution = ModToolsCore.targetresolution;
             sliceCount = ModToolsCore.slicecount;
@@ -56,7 +59,7 @@ namespace ModTools
             modData.TargetResolution = targetResolution;
             modData.SliceCount = sliceCount;
             modData.BaseDirectory = baseDirectory;
-            cvusmo = LoadEmbeddedTexture("ModTools.Assets.Images.cvusmo400.png");
+            cvusmo = LoadEmbeddedTexture("ModTools.Editor.assets.images.modtools.png");
                 import = $"Path to {GetCurrentSceneName()}'s 2D Texture Slices";
         }
         private void OnGUI()
@@ -64,28 +67,31 @@ namespace ModTools
             EditorGUILayout.LabelField("3D Texture Generator", EditorStyles.boldLabel);
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
             GUILayout.BeginHorizontal();
 
             // Instructions
-            Rect imageRect = GUILayoutUtility.GetRect(40, 40);
+            GUILayout.Space(20);
+            Rect imageRect = GUILayoutUtility.GetRect(60, 60, GUILayout.Width(150), GUILayout.Height(150));
             if (cvusmo != null)
             {
                 GUI.DrawTexture(imageRect, cvusmo);
             }
             if (GUI.Button(imageRect, new GUIContent("", "made by cvusmo."), GUIStyle.none))
             {
-                Application.OpenURL("http://www.youtube.com/@cvusmo"); 
+                Application.OpenURL("http://www.youtube.com/@cvusmo");
             }
-            GUILayout.Space(10);
+
+            GUILayout.Space(50);  
+
             GUIContent buttonContent = new GUIContent("Open Instructions", "Click to open detailed instructions.");
-            if (GUILayout.Button(buttonContent))
+            if (GUILayout.Button(buttonContent, GUILayout.Width(150)))
             {
                 InstructionsWindow.ShowInstructions();
             }
 
             GUILayout.EndHorizontal();
-
+            GUILayout.Space(10);
             // Step 1: Import 2D Texture Assets
             EditorGUILayout.LabelField("Step 1: Import 2D Texture Assets", EditorStyles.boldLabel);
 
@@ -144,7 +150,7 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             // Step 2: Auto-Generate 2DTexture List
             EditorGUILayout.LabelField("Step 2: Auto-Generate 2D Texture List", EditorStyles.boldLabel);
@@ -175,7 +181,7 @@ namespace ModTools
 
             CenteredButton(new GUIContent("Clear Texture List"), ClearOrientations);
 
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             // Step 3: Configure 2D Textures
             EditorGUILayout.LabelField("Step 3: Configure 2D Textures", EditorStyles.boldLabel);
@@ -244,7 +250,7 @@ namespace ModTools
             }
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             // Step 4: Prepare 2D Textures 
             EditorGUILayout.LabelField("Step 4: Stack 2D Textures", EditorStyles.boldLabel);
@@ -259,7 +265,7 @@ namespace ModTools
             }
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             // Step 5: Generate 3D Textures
             EditorGUILayout.LabelField("Step 5: Generate 3D Textures", EditorStyles.boldLabel);
@@ -272,7 +278,7 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             // Step 6: Create Animation Bridge (Optional)
             EditorGUILayout.LabelField("Step 6: Create Animation Bridge (Optional)", EditorStyles.boldLabel);
@@ -285,7 +291,7 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             // Step 7: Create 3D Shader (Optional)
             EditorGUILayout.LabelField("Step 7: Create 3D Shader (Optional)", EditorStyles.boldLabel);
@@ -298,7 +304,7 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
 
             EditorGUILayout.EndScrollView();
         }
@@ -421,20 +427,21 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(10);
         }
-        Texture2D LoadEmbeddedTexture(string resourceName)
+        private Texture2D LoadEmbeddedTexture(string resourceName)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
+
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             {
-                if (stream == null) return null;
+                if (stream == null)
+                    return null;
 
-                byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length);
-
+                byte[] data = new byte[stream.Length];
+                stream.Read(data, 0, (int)stream.Length);
                 Texture2D texture = new Texture2D(2, 2);
-                texture.LoadImage(buffer);
+                texture.LoadImage(data);
 
                 return texture;
             }
