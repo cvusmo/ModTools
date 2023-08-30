@@ -41,7 +41,6 @@ namespace ModTools
 
             mainWindow.Show();
         }
-
         private void OnEnable()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
