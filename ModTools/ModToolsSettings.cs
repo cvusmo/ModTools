@@ -19,12 +19,12 @@ namespace ModTools
         [MenuItem("KSP2 ModTools/3D Textures/Generator")]
         public static void ShowWindow()
         {
-            ModToolsSettings window = GetWindow<ModToolsSettings>("3D Texture Generator");
-            window.position = new Rect(window.position.x, window.position.y, 500, 500);
-            window.minSize = new Vector2(1, 1);
-            window.maxSize = new Vector2(3840, 2160);
+            ModToolsSettings mainwindow = GetWindow<ModToolsSettings>("3D Texture Generator");
+            mainwindow.position = new Rect(mainwindow.position.x, mainwindow.position.y, 500, 600);
+            mainwindow.minSize = new Vector2(1, 1);
+            mainwindow.maxSize = new Vector2(3840, 2160);
 
-            window.Show();
+            mainwindow.Show();
         }
         private void OnEnable()
         {
@@ -38,20 +38,31 @@ namespace ModTools
         {
             EditorGUILayout.LabelField("3D Texture Settings", EditorStyles.boldLabel);
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Import 2D Texture Assets", EditorStyles.boldLabel);
 
-            import = EditorGUILayout.TextField("Import:", import);
-
-            EditorGUILayout.LabelField("Create Folder to Save Textures:", EditorStyles.boldLabel);
-            export = EditorGUILayout.TextField("Save Textures to Path:", export);
-            newFolderName = EditorGUILayout.TextField("New Folder Name:", newFolderName);
-
-            EditorGUILayout.Space();
-
+            // Instructions Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Import Now", GUILayout.Width(150), GUILayout.Height(30)))
+                if (GUILayout.Button(new GUIContent("Open Instructions", "Click to open detailed instructions."), GUILayout.Width(150), GUILayout.Height(30)))
+                {
+                    InstructionsWindow.ShowInstructions();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
+            // Import 2D Texture Assets
+            EditorGUILayout.LabelField("Import 2D Texture Assets", EditorStyles.boldLabel);
+            import = EditorGUILayout.TextField(new GUIContent("Import:", "Path where 2D texture assets are located."), import);
+            export = EditorGUILayout.TextField(new GUIContent("Save Textures to Path:", "Path where textures should be saved."), export);
+            newFolderName = EditorGUILayout.TextField(new GUIContent("New Folder Name:", "Name of the new folder to save textures."), newFolderName);
+
+            // Import Now Button
+            EditorGUILayout.BeginHorizontal();
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button(new GUIContent("Import Now", "Import 2D texture assets."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     ImportAssets(import, export);
                     UpdateOrientations(import);
@@ -61,16 +72,18 @@ namespace ModTools
 
             EditorGUILayout.Space();
 
+            // Generate 2D Texture List
             EditorGUILayout.LabelField("Generate 2D Texture List:", EditorStyles.boldLabel);
             foreach (var orientation in orientationsList)
             {
                 EditorGUILayout.LabelField(orientation);
             }
 
+            // Apply Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Apply"))
+                if (GUILayout.Button(new GUIContent("Apply", "Apply the changes made."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     ModToolsCore.resolution = resolution;
                     ModToolsCore.targetresolution = targetResolution;
@@ -83,19 +96,19 @@ namespace ModTools
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
-            EditorGUILayout.Space();
 
+            // Initialize 2D Textures
             EditorGUILayout.LabelField("Initialize 2D Textures", EditorStyles.boldLabel);
+            resolution = EditorGUILayout.IntField(new GUIContent("Resolution", "Define the resolution."), resolution);
+            targetResolution = EditorGUILayout.IntField(new GUIContent("Target Resolution", "Define the target resolution."), targetResolution);
+            sliceCount = EditorGUILayout.IntField(new GUIContent("Slice Count", "Define the slice count."), sliceCount);
+            baseDirectory = EditorGUILayout.TextField(new GUIContent("Base Directory", "Define the base directory."), baseDirectory);
 
-            resolution = EditorGUILayout.IntField("Resolution", resolution);
-            targetResolution = EditorGUILayout.IntField("Target Resolution", targetResolution);
-            sliceCount = EditorGUILayout.IntField("Slice Count", sliceCount);
-            baseDirectory = EditorGUILayout.TextField("Base Directory", baseDirectory);
-
+            // Format Textures Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Format Textures", GUILayout.Width(150), GUILayout.Height(30)))
+                if (GUILayout.Button(new GUIContent("Format Textures", "Set up the textures in the correct format."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     ModToolsCore.SetupTextures();
                 }
@@ -104,10 +117,11 @@ namespace ModTools
 
             EditorGUILayout.Space();
 
+            // Stack Slices Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Stack Slices", GUILayout.Width(150), GUILayout.Height(30)))
+                if (GUILayout.Button(new GUIContent("Stack Slices", "Stack the 2D slices for 3D texture creation."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     ModToolsCore.StackSlices();
                 }
@@ -116,20 +130,24 @@ namespace ModTools
 
             EditorGUILayout.Space();
 
+            // 3D Textures Generator Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("3D Textures Generator", GUILayout.Width(150), GUILayout.Height(30)))
+                if (GUILayout.Button(new GUIContent("3D Textures Generator", "Generate 3D textures from 2D slices."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     ModToolsCore.CreateTexture3DFromSlices();
                 }
             }
             EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.Space();
+
+            // Animation Bridge Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Animation Bridge", GUILayout.Width(150), GUILayout.Height(30)))
+                if (GUILayout.Button(new GUIContent("Animation Bridge", "Create a bridge for animations with the textures."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     ModToolsCore.CreateAnimationBridge();
                 }
@@ -138,7 +156,6 @@ namespace ModTools
 
             EditorGUILayout.Space();
         }
-
         private void ImportAssets(string fromPath, string toPath)
         {
             if (!Directory.Exists(fromPath))

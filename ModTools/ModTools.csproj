@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimationBridge.cs" />
+    <Compile Include="InstructionsWindow.cs" />
     <Compile Include="ModToolsSettings.cs" />
     <Compile Include="ModToolsCore.cs" />
   </ItemGroup>
