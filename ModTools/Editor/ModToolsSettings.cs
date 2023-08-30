@@ -25,6 +25,8 @@ namespace ModTools
         private string export = "Assets/";
         internal string selectedOrientation;
         private Texture2D cvusmo;
+
+        [MenuItem("KSP2 ModTools/3D Textures/Generator")]
         public static void ShowWindow()
         {
             ModToolsSettings mainWindow = GetWindow<ModToolsSettings>("Generator");
@@ -63,9 +65,8 @@ namespace ModTools
                 import = $"Path to {GetCurrentSceneName()}'s 2D Texture Slices";
         }
         private void OnGUI()
-        {
+        {        
             EditorGUILayout.LabelField("3D Texture Generator", EditorStyles.boldLabel);
-
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             EditorGUILayout.Space(10);
             GUILayout.BeginHorizontal();
