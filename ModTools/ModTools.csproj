@@ -60,7 +60,6 @@
     <Compile Include="Editor\GenerateShader.cs" />
     <Compile Include="Editor\InstructionsWindow.cs" />
     <Compile Include="Editor\ModData.cs" />
-    <Compile Include="Editor\ModTools.cs" />
     <Compile Include="Editor\ModToolsCore.cs" />
     <Compile Include="Editor\ModToolsSettings.cs" />
   </ItemGroup>
