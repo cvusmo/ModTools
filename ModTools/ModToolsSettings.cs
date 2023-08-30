@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using System.Reflection;
 
 namespace ModTools
 {
@@ -23,6 +24,7 @@ namespace ModTools
         private string newFolderName = string.Empty;
         private string export = "Assets/";
         internal string selectedOrientation;
+        private Texture2D cvusmo;
 
         [MenuItem("KSP2 ModTools/3D Texture Generator")]
         public static void ShowWindow()
@@ -30,7 +32,7 @@ namespace ModTools
             ModToolsSettings mainWindow = GetWindow<ModToolsSettings>("Generator");
 
             float width = 400;
-            float height = 500;
+            float height = 600;
 
             float centerX = (Screen.currentResolution.width - width) / 2;
             float centerY = (Screen.currentResolution.height - height) / 2;
@@ -41,9 +43,10 @@ namespace ModTools
 
             mainWindow.Show();
         }
+
         private void OnEnable()
         {
-            import = $"Path to {GetCurrentSceneName()}'s 2D Texture Slices";
+            
             resolution = ModToolsCore.resolution;
             targetResolution = ModToolsCore.targetresolution;
             sliceCount = ModToolsCore.slicecount;
@@ -53,6 +56,8 @@ namespace ModTools
             modData.TargetResolution = targetResolution;
             modData.SliceCount = sliceCount;
             modData.BaseDirectory = baseDirectory;
+            cvusmo = LoadEmbeddedTexture("ModTools.Assets.Images.cvusmo400.png");
+                import = $"Path to {GetCurrentSceneName()}'s 2D Texture Slices";
         }
         private void OnGUI()
         {
@@ -60,9 +65,26 @@ namespace ModTools
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             EditorGUILayout.Space();
+            GUILayout.BeginHorizontal();
 
             // Instructions
-            CenteredButton(new GUIContent("Open Instructions", "Click to open detailed instructions."), InstructionsWindow.ShowInstructions);
+            Rect imageRect = GUILayoutUtility.GetRect(40, 40);
+            if (cvusmo != null)
+            {
+                GUI.DrawTexture(imageRect, cvusmo);
+            }
+            if (GUI.Button(imageRect, new GUIContent("", "made by cvusmo."), GUIStyle.none))
+            {
+                Application.OpenURL("http://www.youtube.com/@cvusmo"); 
+            }
+            GUILayout.Space(10);
+            GUIContent buttonContent = new GUIContent("Open Instructions", "Click to open detailed instructions.");
+            if (GUILayout.Button(buttonContent))
+            {
+                InstructionsWindow.ShowInstructions();
+            }
+
+            GUILayout.EndHorizontal();
 
             // Step 1: Import 2D Texture Assets
             EditorGUILayout.LabelField("Step 1: Import 2D Texture Assets", EditorStyles.boldLabel);
@@ -400,6 +422,22 @@ namespace ModTools
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
+        }
+        Texture2D LoadEmbeddedTexture(string resourceName)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null) return null;
+
+                byte[] buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, buffer.Length);
+
+                Texture2D texture = new Texture2D(2, 2);
+                texture.LoadImage(buffer);
+
+                return texture;
+            }
         }
     }
 }

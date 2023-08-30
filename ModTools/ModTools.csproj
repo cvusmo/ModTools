@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="assets\images\cvusmo400.png" />
     <Content Include="cvusmo.ico" />
   </ItemGroup>
   <ItemGroup>
