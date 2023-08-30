@@ -42,8 +42,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimationBridge.cs" />
-    <Compile Include="ModToolsSettingsWindow.cs" />
-    <Compile Include="ModTools.cs" />
+    <Compile Include="ModToolsSettings.cs" />
+    <Compile Include="ModToolsCore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEditor">

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ModTools
 {
-    public class ModTools : MonoBehaviour
+    public class ModToolsCore : MonoBehaviour
     {
         //Orientations (name_of_image.png)
         internal static string[] orientations = { "0_Back",
@@ -26,7 +26,7 @@ namespace ModTools
         internal static int targetresolution = 128; // resolution to use in unity 
         internal static int stackedHeight = resolution * slicecount;
 
-        [MenuItem("KSP2 ModTools/Setup Textures")]
+        [MenuItem("KSP2 ModTools/3D Textures/2. Setup Textures")]
         static void SetupTextures()
         {
             foreach (string orientation in orientations)
@@ -39,7 +39,7 @@ namespace ModTools
             }
         }
 
-        [MenuItem("KSP2 ModTools/Stack Slices")]
+        [MenuItem("KSP2 ModTools/3D Textures/3. Stack Slices")]
         static void StackSlices()
         {     
             foreach (string orientation in orientations)
@@ -66,7 +66,7 @@ namespace ModTools
             }
         }
 
-        [MenuItem("KSP2 ModTools/3D Textures Generator")]
+        [MenuItem("KSP2 ModTools/3D Textures/4. 3D Textures Generator")]
         static void CreateTexture3DFromSlices()
         {       
             int targetResolution = targetresolution;
@@ -99,7 +99,7 @@ namespace ModTools
             }
         }
 
-        [MenuItem("KSP2 ModTools/Animation Bridge")]
+        [MenuItem("KSP2 ModTools/3D Textures/5. Animation Bridge")]
         static void CreateAnimationBridge()
         {
             AnimationBridge newBridge = ScriptableObject.CreateInstance<AnimationBridge>();
