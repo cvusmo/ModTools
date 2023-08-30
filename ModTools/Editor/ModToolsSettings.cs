@@ -25,8 +25,6 @@ namespace ModTools
         private string export = "Assets/";
         internal string selectedOrientation;
         private Texture2D cvusmo;
-
-        [MenuItem("KSP2 ModTools/3D Texture Generator")]
         public static void ShowWindow()
         {
             ModToolsSettings mainWindow = GetWindow<ModToolsSettings>("Generator");
@@ -61,7 +59,7 @@ namespace ModTools
             modData.TargetResolution = targetResolution;
             modData.SliceCount = sliceCount;
             modData.BaseDirectory = baseDirectory;
-            cvusmo = LoadEmbeddedTexture("ModTools.Editor.assets.images.cvusmo400.png");
+            cvusmo = LoadEmbeddedTexture("ModTools.Editor.assets.images.modtools.png");
                 import = $"Path to {GetCurrentSceneName()}'s 2D Texture Slices";
         }
         private void OnGUI()

@@ -49,8 +49,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Editor\assets\images\cvusmo400.png" />
     <Content Include="cvusmo.ico" />
+    <Content Include="Editor\assets\images\modtools.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
