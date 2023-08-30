@@ -1,30 +1,26 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace ModTools
 {
     public class ModToolsCore : MonoBehaviour
     {
-        //Orientations (name_of_image.png)
-        internal static string[] orientations = { "0_Back",
-        "45_BackRight",
-        "90_Right",
-        "135_FrontRight",
-        "180_Front",
-        "225_FrontLeft",
-        "270_Left",
-        "315_BackLeft",
-        "90_Top",
-        "270_Bottom",
-        "D45_TopDiagonal",
-        "D225_BottomDiagonal" };
+        internal static List<string> orientations = new List<string>();
 
+        public static string BaseDirectory
+        {
+            get { return baseDirectory; }
+            set { baseDirectory = value; }
+        }
         internal static string baseDirectory = "Assets/FancyFuelTanks/Materials & Textures/VFX/VaporVFX/VaporSlices/";
 
         internal static int resolution = 128; // resolution of original image
         internal static int slicecount = 16; // # of slices
         internal static int targetresolution = 128; // resolution to use in unity 
         internal static int stackedHeight = resolution * slicecount;
+        internal static string StackSliceFolder = "Stacked";
 
         internal static void SetupTextures()
         {
@@ -38,7 +34,7 @@ namespace ModTools
             }
         }
         internal static void StackSlices()
-        {     
+        {
             foreach (string orientation in orientations)
             {
                 Texture2D stackedTexture = new Texture2D(resolution, stackedHeight, TextureFormat.RGBA32, false);
@@ -58,7 +54,7 @@ namespace ModTools
                 }
 
                 byte[] bytes = stackedTexture.EncodeToPNG();
-                System.IO.File.WriteAllBytes($"{baseDirectory}/Stacked/{orientation}_Stacked.png", bytes);
+                System.IO.File.WriteAllBytes($"{baseDirectory}/{StackSliceFolder}/{orientation}_Stacked.png", bytes);
                 AssetDatabase.Refresh();
             }
         }
@@ -129,5 +125,18 @@ namespace ModTools
             RenderTexture.active = null;
             return resizedTexture;
         }
+        internal static void LoadOrientations()
+        {
+            orientations.Clear();
+            var directories = Directory.GetDirectories(baseDirectory);
+            foreach (var dir in directories)
+            {
+                string orientationName = Path.GetFileName(dir);
+                if (orientationName != "addressableassetsdata" && !orientationName.StartsWith("SomeOtherUnwantedPrefix"))
+                {
+                    orientations.Add(orientationName);
+                }
+            }
+        }     
     }
 }

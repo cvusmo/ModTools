@@ -66,7 +66,6 @@ public class InstructionsWindow : EditorWindow
 
         window.Show();
     }
-
     private void OnGUI()
     {
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);

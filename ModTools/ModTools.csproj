@@ -42,7 +42,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimationBridge.cs" />
+    <Compile Include="GenerateShader.cs" />
     <Compile Include="InstructionsWindow.cs" />
+    <Compile Include="ModData.cs" />
     <Compile Include="ModToolsSettings.cs" />
     <Compile Include="ModToolsCore.cs" />
   </ItemGroup>
