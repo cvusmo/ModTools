@@ -41,12 +41,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AnimationBridge.cs" />
-    <Compile Include="GenerateShader.cs" />
-    <Compile Include="InstructionsWindow.cs" />
-    <Compile Include="ModData.cs" />
-    <Compile Include="ModToolsSettings.cs" />
-    <Compile Include="ModToolsCore.cs" />
+    <Compile Include="Editor\AnimationBridge.cs" />
+    <Compile Include="Editor\GenerateShader.cs" />
+    <Compile Include="Editor\InstructionsWindow.cs" />
+    <Compile Include="Editor\ModData.cs" />
+    <Compile Include="Editor\ModToolsSettings.cs" />
+    <Compile Include="Editor\ModToolsCore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEditor">
@@ -57,7 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="assets\images\cvusmo400.png" />
+    <EmbeddedResource Include="Editor\assets\images\cvusmo400.png" />
     <Content Include="cvusmo.ico" />
   </ItemGroup>
   <ItemGroup>
