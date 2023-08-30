@@ -42,6 +42,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimationBridge.cs" />
+    <Compile Include="GenerateShader.cs" />
+    <Compile Include="InstructionsWindow.cs" />
+    <Compile Include="ModData.cs" />
+    <Compile Include="ModToolsSettings.cs" />
+    <Compile Include="ModToolsCore.cs" />
     <Compile Include="ModTools.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="assets\images\cvusmo400.png" />
     <Content Include="cvusmo.ico" />
   </ItemGroup>
   <ItemGroup>
