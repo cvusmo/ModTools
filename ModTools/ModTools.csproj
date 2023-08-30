@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cvusmo.ico" />
-    <Content Include="Editor\assets\images\modtools.png" />
+    <EmbeddedResource Include="Editor\assets\images\modtools.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
