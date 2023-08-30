@@ -26,8 +26,7 @@ namespace ModTools
         internal static int targetresolution = 128; // resolution to use in unity 
         internal static int stackedHeight = resolution * slicecount;
 
-        [MenuItem("KSP2 ModTools/3D Textures/2. Setup Textures")]
-        static void SetupTextures()
+        internal static void SetupTextures()
         {
             foreach (string orientation in orientations)
             {
@@ -38,9 +37,7 @@ namespace ModTools
                 }
             }
         }
-
-        [MenuItem("KSP2 ModTools/3D Textures/3. Stack Slices")]
-        static void StackSlices()
+        internal static void StackSlices()
         {     
             foreach (string orientation in orientations)
             {
@@ -65,9 +62,7 @@ namespace ModTools
                 AssetDatabase.Refresh();
             }
         }
-
-        [MenuItem("KSP2 ModTools/3D Textures/4. 3D Textures Generator")]
-        static void CreateTexture3DFromSlices()
+        internal static void CreateTexture3DFromSlices()
         {       
             int targetResolution = targetresolution;
             int depth = slicecount;
@@ -98,9 +93,7 @@ namespace ModTools
                 AssetDatabase.CreateAsset(texture3D, $"{baseDirectory}/3DTexture_{orientation}.asset");
             }
         }
-
-        [MenuItem("KSP2 ModTools/3D Textures/5. Animation Bridge")]
-        static void CreateAnimationBridge()
+        internal static void CreateAnimationBridge()
         {
             AnimationBridge newBridge = ScriptableObject.CreateInstance<AnimationBridge>();
             AssetDatabase.CreateAsset(newBridge, "Assets/AnimationBridge.asset");
