@@ -47,6 +47,7 @@
     <Compile Include="ModData.cs" />
     <Compile Include="ModToolsSettings.cs" />
     <Compile Include="ModToolsCore.cs" />
+    <Compile Include="ModTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEditor">
