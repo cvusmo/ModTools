@@ -23,7 +23,7 @@ public class InstructionsWindow : EditorWindow
     
     Click 'Import Now'.
 
-    **Step 2: Review and Approve Texture List**
+    **Step 2: Auto-Generate Texture List**
     - The tool will automatically detect and list orientations based on imported folders.
     - Review the list to ensure all orientations are present.
 

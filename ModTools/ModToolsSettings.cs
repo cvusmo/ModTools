@@ -19,13 +19,21 @@ namespace ModTools
         [MenuItem("KSP2 ModTools/3D Textures/Generator")]
         public static void ShowWindow()
         {
-            ModToolsSettings mainwindow = GetWindow<ModToolsSettings>("3D Texture Generator");
-            mainwindow.position = new Rect(mainwindow.position.x, mainwindow.position.y, 500, 600);
-            mainwindow.minSize = new Vector2(1, 1);
-            mainwindow.maxSize = new Vector2(3840, 2160);
+            ModToolsSettings mainWindow = GetWindow<ModToolsSettings>("3D Texture Generator");
 
-            mainwindow.Show();
+            float width = 500;
+            float height = 650;
+
+            float centerX = (Screen.currentResolution.width - width) / 2;
+            float centerY = (Screen.currentResolution.height - height) / 2;
+
+            mainWindow.position = new Rect(centerX, centerY, width, height);
+            mainWindow.minSize = new Vector2(1, 1);
+            mainWindow.maxSize = new Vector2(3840, 2160);
+
+            mainWindow.Show();
         }
+
         private void OnEnable()
         {
             import = $"Path to {GetCurrentSceneName()}'s location (e.g. C:/YourProject/Mods/{GetCurrentSceneName()}/Textures/)";
@@ -49,16 +57,14 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
 
-            // Import 2D Texture Assets
-            EditorGUILayout.LabelField("Import 2D Texture Assets", EditorStyles.boldLabel);
+            // Step 1: Import 2D Texture Assets
+            EditorGUILayout.LabelField("Step 1: Import 2D Texture Assets", EditorStyles.boldLabel);
             import = EditorGUILayout.TextField(new GUIContent("Import:", "Path where 2D texture assets are located."), import);
             export = EditorGUILayout.TextField(new GUIContent("Save Textures to Path:", "Path where textures should be saved."), export);
             newFolderName = EditorGUILayout.TextField(new GUIContent("New Folder Name:", "Name of the new folder to save textures."), newFolderName);
 
-            // Import Now Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
@@ -69,17 +75,15 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
 
-            // Generate 2D Texture List
-            EditorGUILayout.LabelField("Generate 2D Texture List:", EditorStyles.boldLabel);
+            // Step 2: Review and Approve Texture List
+            EditorGUILayout.LabelField("Step 2: Auto-Generate Texture List", EditorStyles.boldLabel);
             foreach (var orientation in orientationsList)
             {
                 EditorGUILayout.LabelField(orientation);
             }
 
-            // Apply Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
@@ -94,17 +98,15 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
 
-            // Initialize 2D Textures
-            EditorGUILayout.LabelField("Initialize 2D Textures", EditorStyles.boldLabel);
+            // Step 3: Configure 2D Textures
+            EditorGUILayout.LabelField("Step 3: Configure 2D Textures", EditorStyles.boldLabel);
             resolution = EditorGUILayout.IntField(new GUIContent("Resolution", "Define the resolution."), resolution);
             targetResolution = EditorGUILayout.IntField(new GUIContent("Target Resolution", "Define the target resolution."), targetResolution);
             sliceCount = EditorGUILayout.IntField(new GUIContent("Slice Count", "Define the slice count."), sliceCount);
             baseDirectory = EditorGUILayout.TextField(new GUIContent("Base Directory", "Define the base directory."), baseDirectory);
 
-            // Format Textures Button
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
@@ -114,10 +116,10 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
 
-            // Stack Slices Button
+            // Step 4: Stack Slices
+            EditorGUILayout.LabelField("Step 4: Stack Slices", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
@@ -127,10 +129,10 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
 
-            // 3D Textures Generator Button
+            // Step 5: Generate 3D Textures
+            EditorGUILayout.LabelField("Step 5: Generate 3D Textures", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
@@ -140,10 +142,10 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
 
-            // Animation Bridge Button
+            // Step 6: Create Animation Bridge
+            EditorGUILayout.LabelField("Step 6: Create Animation Bridge (Optional)", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
@@ -153,7 +155,6 @@ namespace ModTools
                 }
             }
             EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.Space();
         }
         private void ImportAssets(string fromPath, string toPath)
