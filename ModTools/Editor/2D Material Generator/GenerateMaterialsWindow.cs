@@ -125,7 +125,7 @@ namespace ModTools
             {
                 Debug.Log("Import & Generate Textures button clicked. [Line: 133]");
 
-                List<string> importedTextures = ImportAndSetupAssets(textureDirectory, export); 
+                List<string> importedTextures = ImportAndSetupAssets(textureDirectory, export);
 
                 if (importedTextures.Any())
                 {
@@ -178,9 +178,10 @@ namespace ModTools
 
             return importedTextures;
         }
-        internal List<Material> CreateMaterialsFromGroups(Dictionary<string, List<string>> groupedTextures, string directoryPath)
+        internal List<Material> CreateMaterialsFromGroups(Dictionary<string, List<string>> groupedTextures, string toPath)
         {
             List<Material> createdMaterials = new List<Material>();
+
             Shader luxShader = Shader.Find("ModTools/LuxShader");
             if (luxShader == null)
             {
@@ -192,22 +193,18 @@ namespace ModTools
             {
                 Debug.Log($"Processing group '{group.Key}'");
 
-                Material newMaterial = ModToolsUtilities.CreateAndConfigureMaterial(group.Value, directoryPath, luxShader);
+                Material newMaterial = CreateAndConfigureMaterial(group.Value, toPath, luxShader);
 
-                string textureNameWithoutExtension = Path.GetFileNameWithoutExtension(group.Key); 
-                string baseTextureName = textureNameWithoutExtension.Split('_')[0]; // This extracts "TEXTURE1" from "TEXTURE1_d".
+                string materialName = ModData.GetBaseName(group.Value[0]);
 
-                string individualDirectoryPath = Path.Combine(directoryPath, baseTextureName).Replace("\\", "/");
-                if (!Directory.Exists(individualDirectoryPath))
-                {
-                    Directory.CreateDirectory(individualDirectoryPath);
-                }
+                newMaterial.name = materialName;
+                string savePath = Path.Combine(toPath, $"{materialName}.mat").Replace("\\", "/");
 
-                string savePath = Path.Combine(individualDirectoryPath, $"{newMaterial.name}.mat").Replace("\\", "/");
-
+                AssetDatabase.Refresh();
                 AssetDatabase.CreateAsset(newMaterial, savePath);
                 Debug.Log($"Saving material to: {savePath}");
                 AssetDatabase.SaveAssets();
+
                 createdMaterials.Add(newMaterial);
             }
 

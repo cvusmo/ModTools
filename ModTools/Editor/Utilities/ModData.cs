@@ -16,7 +16,6 @@ namespace ModTools.Utilities
         private List<string> texturesList = new List<string>();
         private List<string> failedTextures = new List<string>();
         private string textureDirectory;
-
         internal string TextureDirectory
         {
             get => textureDirectory;
@@ -83,7 +82,7 @@ namespace ModTools.Utilities
             Debug.Log($"Total groups after grouping: {groupedTextures.Count}");
             return groupedTextures;
         }
-        private string GetBaseName(string texture)
+        internal static string GetBaseName(string texture)
         {
             return Path.GetFileNameWithoutExtension(texture).Split('_')[0];
         }
