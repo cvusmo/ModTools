@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using System.Reflection;
+using ModTools.Utilities;
+using UnityEngine.Diagnostics;
 
 namespace ModTools
 {
-    public class ModToolsSettings : EditorWindow
+    public class Generate3DTextureWindow : EditorWindow
     {
         Vector2 scrollPosition;
 
@@ -24,12 +26,14 @@ namespace ModTools
         private string newFolderName = string.Empty;
         private string export = "Assets/";
         internal string selectedOrientation;
-        private Texture2D cvusmo;
+        public static Texture2D _cvusmoTexture;
+
+        ModToolsUtilities utils = new ModToolsUtilities();
 
         [MenuItem("KSP2 ModTools/3D Textures/Generator")]
         public static void ShowWindow()
         {
-            ModToolsSettings mainWindow = GetWindow<ModToolsSettings>("Generator");
+            Generate3DTextureWindow mainWindow = GetWindow<Generate3DTextureWindow>("3D Texture Generator");
 
             float width = 400;
             float height = 600;
@@ -43,7 +47,6 @@ namespace ModTools
 
             mainWindow.Show();
         }
-
         private void OnEnable()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -61,38 +64,38 @@ namespace ModTools
             modData.TargetResolution = targetResolution;
             modData.SliceCount = sliceCount;
             modData.BaseDirectory = baseDirectory;
-            cvusmo = LoadEmbeddedTexture("ModTools.Editor.assets.images.modtools.png");
-                import = $"Path to {GetCurrentSceneName()}'s 2D Texture Slices";
+            utils.LoadIcon();
+            _cvusmoTexture = utils.LoadIcon();
         }
         private void OnGUI()
-        {        
-            EditorGUILayout.LabelField("3D Texture Generator", EditorStyles.boldLabel);
+        {
+            EditorGUILayout.LabelField("KSP2 ModTools", EditorStyles.boldLabel);
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             EditorGUILayout.Space(10);
-            GUILayout.BeginHorizontal();
+            EditorGUILayout.BeginHorizontal();
 
             // Instructions
             GUILayout.Space(20);
-            Rect imageRect = GUILayoutUtility.GetRect(60, 60, GUILayout.Width(150), GUILayout.Height(150));
-            if (cvusmo != null)
+            Rect imageRect = GUILayoutUtility.GetRect(30, 30, GUILayout.Width(150), GUILayout.Height(150));
+            if (_cvusmoTexture != null)
             {
-                GUI.DrawTexture(imageRect, cvusmo);
+                GUI.DrawTexture(imageRect, _cvusmoTexture);
             }
             if (GUI.Button(imageRect, new GUIContent("", "made by cvusmo."), GUIStyle.none))
             {
                 Application.OpenURL("http://www.youtube.com/@cvusmo");
             }
 
-            GUILayout.Space(50);  
+            GUILayout.Space(50);
 
             GUIContent buttonContent = new GUIContent("Open Instructions", "Click to open detailed instructions.");
             if (GUILayout.Button(buttonContent, GUILayout.Width(150)))
             {
-                InstructionsWindow.ShowInstructions();
+                ModToolsUtilities.ShowInstructions();
             }
 
-            GUILayout.EndHorizontal();
-            GUILayout.Space(10);
+            utils.EndSpacing();
+
             // Step 1: Import 2D Texture Assets
             EditorGUILayout.LabelField("Step 1: Import 2D Texture Assets", EditorStyles.boldLabel);
 
@@ -115,7 +118,7 @@ namespace ModTools
                 }
             }
 
-            EditorGUILayout.EndHorizontal();
+           utils. EndSpacing();
 
             EditorGUILayout.BeginHorizontal();
 
@@ -136,7 +139,7 @@ namespace ModTools
                 }
             }
 
-            EditorGUILayout.EndHorizontal();
+           utils. EndSpacing();
 
             newFolderName = EditorGUILayout.TextField(new GUIContent("New Folder Name:", "Name of the new folder to save textures."), newFolderName);
 
@@ -150,15 +153,12 @@ namespace ModTools
                     UpdateOrientations();
                 }
             }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             // Step 2: Auto-Generate 2DTexture List
             EditorGUILayout.LabelField("Step 2: Auto-Generate 2D Texture List", EditorStyles.boldLabel);
-            foreach (var orientation in orientationsList)
-            {
-                EditorGUILayout.LabelField(orientation);
-            }
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
 
             if (GUILayout.Button(new GUIContent("Apply", "Apply the changes made."), GUILayout.Width(150), GUILayout.Height(30)))
             {
@@ -180,9 +180,13 @@ namespace ModTools
                 EditorUtility.DisplayDialog("Success", "Auto-Generated the Texture List!", "OK");
             }
 
-            CenteredButton(new GUIContent("Clear Texture List"), ClearOrientations);
+            if (GUILayout.Button(new GUIContent("Clear Texture List", "Clear the 2D Texture List"), GUILayout.Width(0), GUILayout.Height(30)))
+            {
+                ClearOrientations();
+                Debug.Log($"Selected Orientation: {selectedOrientation}");
+            }
 
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             // Step 3: Configure 2D Textures
             EditorGUILayout.LabelField("Step 3: Configure 2D Textures", EditorStyles.boldLabel);
@@ -193,11 +197,14 @@ namespace ModTools
             if (selectedResolutionIndex == -1) selectedResolutionIndex = 1;
 
             GUIContent[] guiResolutionOptions = resolutionOptions.Select(option => new GUIContent(option)).ToArray();
+            Debug.Log($"Before IntPopup - Selected Resolution Index: {selectedResolutionIndex}, Target Resolution: {targetResolution}");
             selectedResolutionIndex = EditorGUILayout.IntPopup(
                 new GUIContent("Target Resolution", "Define the target resolution."),
                 selectedResolutionIndex,
                 guiResolutionOptions,
                 resolutionValues);
+            Debug.Log($"After IntPopup - Selected Resolution Index: {selectedResolutionIndex}, Target Resolution: {targetResolution}");
+
 
             if (selectedResolutionIndex >= 0 && selectedResolutionIndex < resolutionValues.Length)
             {
@@ -214,10 +221,13 @@ namespace ModTools
             int[] sliceCounts = { 8, 16, 32, 64, 128 };
             GUIContent[] sliceCountOptions = sliceCounts.Select(count => new GUIContent(count.ToString())).ToArray();
             int selectedSliceIndex = System.Array.IndexOf(sliceCounts, sliceCount);
+            Debug.Log($"Before Popup - Selected Slice Index: {selectedSliceIndex}, Slice Count: {sliceCount}");
             selectedSliceIndex = EditorGUILayout.Popup(
                 new GUIContent("Slice Count", "Define the slice count."),
                 selectedSliceIndex,
                 sliceCountOptions);
+            Debug.Log($"After Popup - Selected Slice Index: {selectedSliceIndex}, Slice Count: {sliceCount}");
+
             if (selectedSliceIndex >= 0)
             {
                 sliceCount = sliceCounts[selectedSliceIndex];
@@ -242,16 +252,15 @@ namespace ModTools
                         {
                             Directory.CreateDirectory(stackSlicePath);
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            EditorUtility.DisplayDialog("Error", "Failed to create directory!", "OK");
+                            EditorUtility.DisplayDialog("Error", $"Failed to create directory! Error: {ex.Message}", "OK");
                         }
                     }
                 }
             }
 
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             // Step 4: Prepare 2D Textures 
             EditorGUILayout.LabelField("Step 4: Stack 2D Textures", EditorStyles.boldLabel);
@@ -265,8 +274,7 @@ namespace ModTools
                 }
             }
 
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             // Step 5: Generate 3D Textures
             EditorGUILayout.LabelField("Step 5: Generate 3D Textures", EditorStyles.boldLabel);
@@ -278,8 +286,7 @@ namespace ModTools
                     ModToolsCore.CreateTexture3DFromSlices();
                 }
             }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             // Step 6: Create Animation Bridge (Optional)
             EditorGUILayout.LabelField("Step 6: Create Animation Bridge (Optional)", EditorStyles.boldLabel);
@@ -291,8 +298,7 @@ namespace ModTools
                     ModToolsCore.CreateAnimationBridge();
                 }
             }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             // Step 7: Create 3D Shader (Optional)
             EditorGUILayout.LabelField("Step 7: Create 3D Shader (Optional)", EditorStyles.boldLabel);
@@ -301,11 +307,10 @@ namespace ModTools
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button(new GUIContent("3D Shader", "Create a 3D Shader."), GUILayout.Width(150), GUILayout.Height(30)))
                 {
-                    GenerateShader.Create3DTextureShader();
+                    Generate3DShader.Create3DTextureShader();
                 }
             }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
+           utils. EndSpacing();
 
             EditorGUILayout.EndScrollView();
         }
@@ -416,36 +421,6 @@ namespace ModTools
             }
 
             ModToolsCore.StackSlices(ModToolsCore.baseDirectory, ModToolsCore.resolution, Path.Combine(export, newFolderName), ModToolsCore.slicecount);
-        }
-        private void CenteredButton(GUIContent content, Action callback, float width = 150, float height = 30)
-        {
-            EditorGUILayout.BeginHorizontal();
-            {
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button(content, GUILayout.Width(width), GUILayout.Height(height)))
-                {
-                    callback.Invoke();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
-        }
-        private Texture2D LoadEmbeddedTexture(string resourceName)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            {
-                if (stream == null)
-                    return null;
-
-                byte[] data = new byte[stream.Length];
-                stream.Read(data, 0, (int)stream.Length);
-                Texture2D texture = new Texture2D(2, 2);
-                texture.LoadImage(data);
-
-                return texture;
-            }
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using ModTools;
 using UnityEditor;
 using UnityEngine;
-
-public class InstructionsWindow : EditorWindow
+using ModTools.Utilities;
+public class InstructionsGenerate3DTextureWindow : EditorWindow
 {
     private Vector2 scrollPosition;
     private string instructionsText = @"
@@ -56,16 +56,7 @@ public class InstructionsWindow : EditorWindow
     - The tool uses specific orientation labels like '0_Back', '90_Right', etc. Ensure your folders match these names for correct identification.
     - Any issues during import or generation will be logged in the Unity console.
     ";
-    public static void ShowInstructions()
-    {
-        ModToolsSettings mainwindow = EditorWindow.GetWindow<ModToolsSettings>();
-        float yOffset = mainwindow.position.height;
-
-        Rect dockedRect = new Rect(mainwindow.position.x, mainwindow.position.y + yOffset, 500, 600);
-        InstructionsWindow window = EditorWindow.GetWindowWithRect<InstructionsWindow>(dockedRect, false, "Instructions");
-
-        window.Show();
-    }
+    
     private void OnGUI()
     {
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);

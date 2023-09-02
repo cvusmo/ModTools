@@ -4,12 +4,12 @@ using UnityEditor;
 
 namespace ModTools
 {
-    internal class GenerateShader
+    internal class Generate3DShader
     {
         public static void Create3DTextureShader()
         {
-            List<string> orientations = ModToolsSettings.modData.Orientations;
-            int resolution = ModToolsSettings.modData.Resolution;
+            List<string> orientations = Generate3DTextureWindow.modData.Orientations;
+            int resolution = Generate3DTextureWindow.modData.Resolution;
             {
                 string shaderContent = @"
 
