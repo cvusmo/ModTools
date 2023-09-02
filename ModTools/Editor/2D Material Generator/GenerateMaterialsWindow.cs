@@ -178,9 +178,10 @@ namespace ModTools
 
             return importedTextures;
         }
-        internal List<Material> CreateMaterialsFromGroups(Dictionary<string, List<string>> groupedTextures, string directoryPath)
+        internal List<Material> CreateMaterialsFromGroups(Dictionary<string, List<string>> groupedTextures, string toPath)
         {
             List<Material> createdMaterials = new List<Material>();
+
             Shader luxShader = Shader.Find("ModTools/LuxShader");
             if (luxShader == null)
             {
@@ -192,19 +193,18 @@ namespace ModTools
             {
                 Debug.Log($"Processing group '{group.Key}'");
 
-                Material newMaterial = ModToolsUtilities.CreateAndConfigureMaterial(group.Value, directoryPath, luxShader);
+                Material newMaterial = CreateAndConfigureMaterial(group.Value, toPath, luxShader);
 
-                string savePath = Path.Combine(directoryPath, $"{newMaterial.name}.mat").Replace("\\", "/");
+                string materialName = ModData.GetBaseName(group.Value[0]);
 
-                string parentDirectory = Path.GetDirectoryName(savePath);
-                if (!Directory.Exists(parentDirectory))
-                {
-                    Directory.CreateDirectory(parentDirectory);
-                }
+                newMaterial.name = materialName;
+                string savePath = Path.Combine(toPath, $"{materialName}.mat").Replace("\\", "/");
 
+                AssetDatabase.Refresh();
                 AssetDatabase.CreateAsset(newMaterial, savePath);
                 Debug.Log($"Saving material to: {savePath}");
                 AssetDatabase.SaveAssets();
+
                 createdMaterials.Add(newMaterial);
             }
 
