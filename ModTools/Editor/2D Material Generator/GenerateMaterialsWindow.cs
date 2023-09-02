@@ -125,7 +125,7 @@ namespace ModTools
             {
                 Debug.Log("Import & Generate Textures button clicked. [Line: 133]");
 
-                List<string> importedTextures = ImportAndSetupAssets(textureDirectory, export); 
+                List<string> importedTextures = ImportAndSetupAssets(textureDirectory, export);
 
                 if (importedTextures.Any())
                 {
@@ -194,16 +194,13 @@ namespace ModTools
 
                 Material newMaterial = ModToolsUtilities.CreateAndConfigureMaterial(group.Value, directoryPath, luxShader);
 
-                string textureNameWithoutExtension = Path.GetFileNameWithoutExtension(group.Key); 
-                string baseTextureName = textureNameWithoutExtension.Split('_')[0]; // This extracts "TEXTURE1" from "TEXTURE1_d".
+                string savePath = Path.Combine(directoryPath, $"{newMaterial.name}.mat").Replace("\\", "/");
 
-                string individualDirectoryPath = Path.Combine(directoryPath, baseTextureName).Replace("\\", "/");
-                if (!Directory.Exists(individualDirectoryPath))
+                string parentDirectory = Path.GetDirectoryName(savePath);
+                if (!Directory.Exists(parentDirectory))
                 {
-                    Directory.CreateDirectory(individualDirectoryPath);
+                    Directory.CreateDirectory(parentDirectory);
                 }
-
-                string savePath = Path.Combine(individualDirectoryPath, $"{newMaterial.name}.mat").Replace("\\", "/");
 
                 AssetDatabase.CreateAsset(newMaterial, savePath);
                 Debug.Log($"Saving material to: {savePath}");
