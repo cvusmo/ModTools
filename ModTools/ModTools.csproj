@@ -56,12 +56,16 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Editor\AnimationBridge.cs" />
-    <Compile Include="Editor\GenerateShader.cs" />
-    <Compile Include="Editor\InstructionsWindow.cs" />
-    <Compile Include="Editor\ModData.cs" />
+    <Compile Include="Editor\2D Material Generator\InstructionsGenerateMaterialsWindow.cs" />
+    <Compile Include="Editor\3D Texture Generator\AnimationBridge.cs" />
+    <Compile Include="Editor\2D Material Generator\GenerateMaterialsWindow.cs" />
+    <Compile Include="Editor\3D Texture Generator\Generate3DShader.cs" />
+    <Compile Include="Editor\3D Texture Generator\InstructionsGenerate3DTextureWindow.cs" />
+    <Compile Include="Editor\Utilities\ModData.cs" />
     <Compile Include="Editor\ModToolsCore.cs" />
-    <Compile Include="Editor\ModToolsSettings.cs" />
+    <Compile Include="Editor\3D Texture Generator\Generate3DTextureWindow.cs" />
+    <Compile Include="Editor\Shaders\Generate2DShader.cs" />
+    <Compile Include="Editor\Utilities\ModToolsUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
